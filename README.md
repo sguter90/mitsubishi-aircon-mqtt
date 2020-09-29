@@ -45,9 +45,9 @@ Before starting this project be aware that:
 
 Ok, let's go :smile:
 1. [Adjust FTDI adapter](doc/01-FTDI-Adapter.md)
-1. [Solder Arduino pin headers](docs/02-Solder-Arduino-Pin-Headers.md)
-1. [Flashing Arduino](docs/03-Flashing-Arduino.md)
-1. [Flashing and configuring WfFi shield](docs/04-Flashing-ESP8266.md)
+1. [Solder Arduino pin headers](doc/02-Solder-Arduino-Pin-Headers.md)
+1. [Flashing Arduino](doc/03-Flashing-Arduino.md)
+1. [Flashing and configuring WfFi shield](doc/04-Flashing-ESP8266.md)
 
 # Acknowledgments
 Special thankts to:
