@@ -37,6 +37,17 @@ I started with almost nothing and needed to buy some extra stuff to complete thi
 * MQTT broker like [Mosquitto](https://mosquitto.org/) or [hmq](https://github.com/fhmq/hmq)
 * [MQTT explorer - for debugging](https://mqtt-explorer.com/)
 
+# HowTo
+Before starting this project be aware that:
+1. Opening the airconditioning device may void warranty!
+1. The device is using high voltage!
+1. The terminal to plug in the CNS connector is difficult to reach in most cases.
+
+Ok, let's go :smile:
+1. [Adjust FTDI adapter](doc/01-FTDI-Adapter.md)
+1. [Solder Arduino pin headers](docs/02-Solder-Arduino-Pin-Headers.md)
+1. [Flashing Arduino](docs/03-Flashing-Arduino.md)
+1. [Flashing and configuring WfFi shield](docs/04-Flashing-ESP8266.md)
 
 # Acknowledgments
 Special thankts to:
