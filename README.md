@@ -28,7 +28,7 @@ I started with almost nothing and needed to buy some extra stuff to complete thi
 #### Soldering
 * [Mat](https://www.amazon.de/gp/product/B07BXTFWV9)
 * [Bolt](https://www.amazon.de/gp/product/B07G8CMMW5)
-* [Rosin](https://www.amazon.de/gp/product/B000V8JYP8)
+* [Solder](https://www.amazon.de/gp/product/B000V8JYP8)
 * [Breadboard + Jump wires](https://www.amazon.de/dp/B07DQKXMHL)
 
 

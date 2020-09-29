@@ -31,6 +31,6 @@ This document helped to identify the pins: [Arduino Pro Mini Datasheet](https://
 
 During flash process the red LED of the arduino should blink.
 The console should output something like this:
-![Wiring](images/ATMega328P_flashing.png)
+![Upload output](images/ATMega328P_flashing.png)
 
 If there is an error "avrdude: stk500_recv(): programmer is not responding" check wiring - especially the DTR cable.
