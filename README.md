@@ -34,6 +34,7 @@ I started with almost nothing and needed to buy some extra stuff to complete thi
 
 ## Software
 * [platformio - for uploading sketches (VSCode recommended)](https://platformio.org/)
+* MQTT broker like [Mosquitto](https://mosquitto.org/) or [hmq](https://github.com/fhmq/hmq)
 * [MQTT explorer - for debugging](https://mqtt-explorer.com/)
 
 
