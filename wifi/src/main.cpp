@@ -94,11 +94,16 @@ void saveConfigCallback ()
   shouldSaveConfig = true;
 }
 
-template <typename Generic> void debug2mqtt(Generic text)
+template <typename Generic> void debug2mqtt(Generic text, int intVal = -1)
 {
   if (debugit)
     {
-      client.publish(debug, text, true);
+      String msg = String(text);
+      if(intVal >= 0) {
+        msg += String(intVal);
+      }
+
+      client.publish(debug, msg.c_str(), true);
     }
 }
 
@@ -518,11 +523,11 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
           Serial.println(toArduino.mode);
 
           toArduino.mode = 0;
-          debug2mqtt("<ESP> Updated power/mode settings send to Arduino/MHI.");
+          debug2mqtt("<ESP> Updated power/mode settings send to Arduino/MHI: ", value);
         }
       else
         {
-          debug2mqtt(" << Error >> Value on MODE topic out of range [0-6]");
+          debug2mqtt(" << Error >> Value on MODE topic out of range [0-6]: ", value);
         }
 
       return;
@@ -540,11 +545,11 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
           Serial.println(toArduino.vanes);
 
           toArduino.vanes = 0;
-          debug2mqtt("<ESP> Updated vanes settings send to Arduino/MHI.");
+          debug2mqtt("<ESP> Updated vanes settings send to Arduino/MHI: ", value);
         }
       else
         {
-          debug2mqtt(" << Error >> Value on VANES topic out of range [1-5]");
+          debug2mqtt(" << Error >> Value on VANES topic out of range [1-5]: ", value);
         }
 
       return;
@@ -562,11 +567,11 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
           Serial.println(toArduino.fanspeed);
 
           toArduino.fanspeed = 0;
-          debug2mqtt("<ESP> Updated fan speed settings send to Arduino/MHI.");
+          debug2mqtt("<ESP> Updated fan speed settings send to Arduino/MHI: ", value);
         }
       else
         {
-          debug2mqtt(" << Error >> Value on FAN SPEED topic out of range [1-4]");
+          debug2mqtt(" << Error >> Value on FAN SPEED topic out of range [1-4]: ", value);
         }
 
       return;
@@ -585,11 +590,12 @@ void callback(char* topic, uint8_t* payload, unsigned int length)
           Serial.println(toArduino.setpoint);
 
           toArduino.setpoint = 0;
-          debug2mqtt("<ESP> Updated setpoint settings send to Arduino/MHI.");
+          
+          debug2mqtt("<ESP> Updated setpoint settings send to Arduino/MHI: ", value);
         }
       else
         {
-          debug2mqtt(" << Error >> Value on SETPOINT topic out of range [18-30]");
+          debug2mqtt(" << Error >> Value on SETPOINT topic out of range [18-30]", value);
         }
 
       return;
@@ -614,6 +620,8 @@ void loop()
 
       if (debugit)                                                                                                 //If debug = on -> send part of SPI byte frame to MQTT debug topic
         {
+          char buffer[54] = "";
+          /*
           char buffer[54] = "<MHI> Updated bit field 4-10:  ";
           int loc = 31;
 
@@ -624,9 +632,12 @@ void loop()
             }
 
           client.publish(debug, buffer, true);                                                                     //Send latest MHI bit field update to MQTT broker
+          */
 
-          snprintf(buffer, 53, "<MHI> %d SPI resync/checksum errors", fromArduino.currentMHI[7]);
-          client.publish(debug, buffer, true);                                                                     //Send cumulative number of checksum errors on Arduino-SPI-MHI connection to MQTT
+          if(fromArduino.currentMHI[7] > 0) {
+            snprintf(buffer, 53, "<MHI> %d SPI resync/checksum errors", fromArduino.currentMHI[7]);
+            client.publish(debug, buffer, true);                                                                     //Send cumulative number of checksum errors on Arduino-SPI-MHI connection to MQTT
+          }
         }
 
       //Process MHI bit field 4-10 updates and only publish changes to corresponding MQTT statuses
@@ -636,7 +647,7 @@ void loop()
       //####### Bit field 4 >>> POWER, MODE & VANES (swing only) #######
       if (fromArduino.currentMHI[0] != current_Bitfield4)                                                          //Any change compared to previous bit field 4?
         {
-          debug2mqtt("<MHI> Bit field 4 changed");
+          //debug2mqtt("<MHI> Bit field 4 changed");
           current_Bitfield4 = fromArduino.currentMHI[0];                                                           //Store new current bit field 4
 
           //POWER and/or MODE changed
@@ -664,7 +675,9 @@ void loop()
               snprintf(msg, 2, "%1d", buf);
               client.publish(statusState, msg, true);                                                              //Send update to MQTT broker
 
-              debug2mqtt("<MHI> Mode/Power changed");
+              String mqttMsg = String("<MHI> Mode/Power changed: ");
+              mqttMsg += String(msg);
+              debug2mqtt(mqttMsg);
 
 /*            Serial.println("State (Mode/Power) changed");
               Serial.print("MQTT publish [");
@@ -681,7 +694,7 @@ void loop()
                   current_Swing = true;
                   client.publish(statusVanes, "5", true);                                                          //Send update to MQTT broker
 
-                  debug2mqtt("<MHI> Vanes changed");
+                  debug2mqtt("<MHI> Vanes changed: 5 (swing)");
 
 /*                Serial.println("Vanes changed");
                   Serial.print("MQTT publish [");
@@ -703,12 +716,12 @@ void loop()
         {
           if (!current_Fanspeed4)                                                                                  //Check if changed compared to current setting
             {
-              debug2mqtt("<MHI> Bit field 10 changed");
+              //debug2mqtt("<MHI> Bit field 10 changed");
 
               current_Fanspeed4 = true;
               client.publish(statusFanspeed, "4", true);                                                           //Send update to MQTT broker
 
-              debug2mqtt("<MHI> Fan speed changed");
+              debug2mqtt("<MHI> Fan speed changed: 4");
 
 /*            Serial.println("Fanspeed changed");
               Serial.print("MQTT publish [");
@@ -741,7 +754,7 @@ void loop()
               snprintf(msg, 2, "%1d", buf);
               client.publish(statusVanes, msg, true);                                                              //Send update to MQTT broker
 
-              debug2mqtt("<MHI> Vanes changed");
+              debug2mqtt("<MHI> Vanes changed: ", (int) msg);
 
 /*            Serial.println("Vanes changed");
               Serial.print("MQTT publish [");
@@ -761,7 +774,7 @@ void loop()
               snprintf(msg, 2, "%1d", buf);
               client.publish(statusFanspeed, msg, true);                                                           //Send update to MQTT broker
 
-              debug2mqtt("<MHI> Fan speed changed");
+              debug2mqtt("<MHI> Fan speed changed: ", (int)msg);
 
 /*            Serial.println("Fanspeed changed");
               Serial.print("MQTT publish [");
@@ -774,7 +787,7 @@ void loop()
       //####### Bit field 6 >>> TEMPERATURE SETPOINT #######
       if (fromArduino.currentMHI[2] != current_Bitfield6)
         {
-          debug2mqtt("<MHI> Bit field 6 changed");
+          //debug2mqtt("<MHI> Bit field 6 changed");
           current_Bitfield6 = fromArduino.currentMHI[2];                                                           //Store new setpoint byte value for reference in next SPI frame update
 
           //Extract new temperature setpoint (bitfield 6)
@@ -784,7 +797,9 @@ void loop()
 
           client.publish(statusSetpoint, msg, true);                                                               //Send update to MQTT broker
 
-          debug2mqtt("<MHI> Setpoint changed");
+          String mqttMsg = String("<MHI> Setpoint changed: ");
+          mqttMsg += String(msg);
+          debug2mqtt(mqttMsg);
 
 /*        Serial.println("Setpoint changed");
           Serial.print("MQTT publish [");
@@ -796,7 +811,7 @@ void loop()
       //####### Bit field 7 >>> ROOM TEMPERATURE #######
       if (fromArduino.currentMHI[3] != current_Bitfield7)
         {
-          debug2mqtt("<MHI> Bit field 7 changed");
+          //debug2mqtt("<MHI> Bit field 7 changed");
           current_Bitfield7 = fromArduino.currentMHI[3];                                                           //Store new setpoint byte value for reference in next SPI frame update
 
           //Calculate current room temperature in degrees Celsius from bitfield 7 using:
@@ -809,7 +824,10 @@ void loop()
 
           client.publish(statusRoomtemp, msg, true);                                                               //Send update to MQTT broker
 
-          debug2mqtt("<MHI> Room temperature changed");
+          String mqttMsg = String("<MHI> Room temperature changed: ");
+          mqttMsg += String(msg);
+          debug2mqtt(mqttMsg);
+          
 
 /*        Serial.println("Roomtemp changed");
           Serial.print("MQTT publish [");
