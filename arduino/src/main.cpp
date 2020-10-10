@@ -95,7 +95,7 @@ void setup (void)
 {
   delay(7000);                                                                                                     //Delay to allow ESP8266 to boot
 
-  Serial.begin (500000);
+  Serial.begin (115200);
   while(Serial.available()) Serial.read();                                                                         //Empty serial read buffer from possible junk send by ESP during boot
 
   //wdt_enable(WDTO_8S);                                                                                           //Start Watchdog Timer (WDT) to detect hang ups

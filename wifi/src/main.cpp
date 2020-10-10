@@ -104,6 +104,7 @@ template <typename Generic> void debug2mqtt(Generic text)
 
 void setup()
 {
+  Serial.begin(115200);
   ETin.begin(details(fromArduino), &Serial);                                                                       //Start the EasyTransfer library, pass in the data details and the name of the serial port
   ETout.begin(details(toArduino), &Serial);
 
@@ -392,7 +393,7 @@ void connect()
 
           connectionFails = 0;
 
-          Serial.begin(500000);
+          Serial.begin(115200);
           while(Serial.available()) Serial.read();                                                                 //Empty serial read buffer. Arduino keeps sending updates over serial during wifi configuration and connecting MQTT broker.
         }
       else
