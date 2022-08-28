@@ -18,7 +18,7 @@ This document helped to identify the pins: [Arduino Pro Mini Datasheet](https://
 | RXD | TXO |
 | RTS | not connected |
 | CTS | GND |
-| DTR | DTR |
+| DTR | DTR (GRN - see datasheet) |
 
 
 ![Wiring](images/ATMega328P_flash_wiring.jpg)
